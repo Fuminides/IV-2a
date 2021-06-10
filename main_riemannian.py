@@ -9,7 +9,7 @@ import time, sys
 
 
 from sklearn.svm import LinearSVC,SVC
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, train_test_split
 
 # import self defined functions 
 from riemannian_multiscale import riemannian_multiscale
@@ -22,14 +22,14 @@ __email__ = "herschmi@ethz.ch,tinor@ethz.ch"
 class Riemannian_Model:
 
 	def __init__(self):
-		self.crossvalidation = False
-		self.data_path = 'dataset/'
+		self.crossvalidation = True
+		self.data_path = '/home/javier/Documents/Graz/'
 		self.svm_kernel = 'linear' #'sigmoid'#'linear' # 'sigmoid', 'rbf',
 		self.svm_c = 0.1 # for linear 0.1 (inverse),
-		self.NO_splits = 5 # number of folds in cross validation 
+		self.NO_splits = 20 # number of folds in cross validation 
 		self.fs = 250. # sampling frequency 
-		self.NO_channels = 22 # number of EEG channels 
-		self.NO_subjects = 9
+		self.NO_channels = 15 # number of EEG channels 
+		self.NO_subjects = 12
 		self.NO_riem = int(self.NO_channels*(self.NO_channels+1)/2) # Total number of CSP feature per band and timewindow
 		self.bw = np.array([2,4,8,16,32]) # bandwidth of filtered signals 
 		self.ftype = 'butter' # 'fir', 'butter'
@@ -96,15 +96,19 @@ class Riemannian_Model:
 	def load_data(self):		
 		if self.crossvalidation:
 			data,label = get_data(self.subject,True,self.data_path)
-			kf = KFold(n_splits=self.NO_splits)
-			split = 0 
-			for train_index, test_index in kf.split(data):
-				if self.split == split:
-					self.train_data = data[train_index]
-					self.train_label = label[train_index]
-					self.eval_data = data[test_index]
-					self.eval_label = label[test_index]
-				split += 1
+            
+			#kf = KFold(n_splits=self.NO_splits)
+			#data = np.swapaxes(data, 0, 2)
+			X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.50, random_state=self.split)
+			#X_train = np.swapaxes(X_train, 0, 2)
+			#X_test = np.swapaxes(X_test, 0, 2)
+            
+			
+			self.train_data = X_train
+			self.train_label = y_train
+			self.eval_data = X_test
+			self.eval_label = y_test
+                    
 		else:
 			self.train_data,self.train_label = get_data(self.subject,True,self.data_path)
 			self.eval_data,self.eval_label = get_data(self.subject,False,self.data_path)
@@ -134,7 +138,7 @@ def main():
 	# Go through all subjects 
 	for model.subject in range(1,model.NO_subjects+1):
 
-		#print("Subject" + str(model.subject)+":")
+		print("Subject" + str(model.subject)+":")
 		
 
 		if model.crossvalidation:
@@ -142,7 +146,9 @@ def main():
 
 			for model.split in range(model.NO_splits):
 				model.load_data()
-				success_sub_sum += model.run_riemannian()
+				s_acc = model.run_riemannian()
+				print(s_acc)
+				success_sub_sum += s_acc
 			
 			# average over all splits 
 			success_rate = success_sub_sum/model.NO_splits
@@ -152,7 +158,7 @@ def main():
 			model.load_data()
 			success_rate = model.run_riemannian()
 
-		print(success_rate)
+		#print(success_rate)
 		success_tot_sum += success_rate 
 
 

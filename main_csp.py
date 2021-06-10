@@ -7,7 +7,7 @@ Model for common spatial pattern (CSP) feature calculation and classification fo
 import numpy as np
 import time
 from sklearn.svm import LinearSVC, SVC
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, train_test_split
 
 # import self defined functions 
 from csp import generate_projection,generate_eye,extract_feature
@@ -20,15 +20,15 @@ __email__ = "herschmi@ethz.ch,tinor@ethz.ch"
 class CSP_Model:
 
 	def __init__(self):
-		self.crossvalidation = False
-		self.data_path 	= 'dataset/'
+		self.crossvalidation = True
+		self.data_path 	= '/home/javier/Documents/Graz/'
 		self.svm_kernel	= 'linear' #'sigmoid'#'linear' # 'sigmoid', 'rbf', 'poly'
 		self.svm_c 	= 0.1 # 0.05 for linear, 20 for rbf, poly: 0.1
 		self.useCSP = True
 		self.NO_splits = 5 # number of folds in cross validation 
 		self.fs = 250. # sampling frequency 
-		self.NO_channels = 22 # number of EEG channels 
-		self.NO_subjects = 9
+		self.NO_channels = 15 # number of EEG channels 
+		self.NO_subjects = 12
 		self.NO_csp = 24 # Total number of CSP feature per band and timewindow
 		self.bw = np.array([2,4,8,16,32]) # bandwidth of filtered signals 
 		# self.bw = np.array([1,2,4,8,16,32])
@@ -75,7 +75,7 @@ class CSP_Model:
 		start_train = time.time()
 		# 1. Apply CSP to bands to get spatial filter 
 		if self.useCSP: 
-			w = generate_projection(self.train_data,self.train_label, self.NO_csp,self.filter_bank,self.time_windows)
+			w = generate_projection(self.train_data,self.train_label, self.NO_csp,self.filter_bank,self.time_windows, 2)
 		else: 
 			w = generate_eye(self.train_data,self.train_label,self.filter_bank,self.time_windows)
 
@@ -113,20 +113,24 @@ class CSP_Model:
 
 
 	def load_data(self):		
-			if self.crossvalidation:
-				data,label = get_data(self.subject,True,self.data_path)
-				kf = KFold(n_splits=self.NO_splits)
-				split = 0 
-				for train_index, test_index in kf.split(data):
-					if self.split == split:
-						self.train_data = data[train_index]
-						self.train_label = label[train_index]
-						self.eval_data = data[test_index]
-						self.eval_label = label[test_index]
-					split += 1
-			else:
-				self.train_data,self.train_label = get_data(self.subject,True,self.data_path)
-				self.eval_data,self.eval_label = get_data(self.subject,False,self.data_path)
+		if self.crossvalidation:
+			data,label = get_data(self.subject,True,self.data_path)
+            
+			#kf = KFold(n_splits=self.NO_splits)
+			#data = np.swapaxes(data, 0, 2)
+			X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.50, random_state=self.split)
+			#X_train = np.swapaxes(X_train, 0, 2)
+			#X_test = np.swapaxes(X_test, 0, 2)
+            
+			
+			self.train_data = X_train
+			self.train_label = y_train
+			self.eval_data = X_test
+			self.eval_label = y_test
+                    
+		else:
+			self.train_data,self.train_label = get_data(self.subject,True,self.data_path)
+			self.eval_data,self.eval_label = get_data(self.subject,False,self.data_path)
 
 
 
@@ -147,7 +151,7 @@ def main():
 	else: 
 		print("Test data set")
 	start = time.time()
-
+	accuracies = []
 	# Go through all subjects 
 	for model.subject in range(1,model.NO_subjects+1):
 
@@ -159,8 +163,11 @@ def main():
 
 			for model.split in range(model.NO_splits):
 				model.load_data()
-				success_sub_sum += model.run_csp()
-				print(success_sub_sum/(model.split+1))
+				s_acc = model.run_csp()
+				print(s_acc)
+				success_sub_sum += s_acc
+				accuracies.append(s_acc)
+				#print(success_sub_sum/(model.split+1))
 			# average over all splits 
 			success_rate = success_sub_sum/model.NO_splits
 
@@ -178,7 +185,7 @@ def main():
 
 	print("Training average time: " +  str(model.train_time/model.NO_subjects))
 	print("Evaluation average time: " +  str(model.eval_time/model.NO_subjects))
-
+	np.array(accuracies).to_csv('csp_accuracies.csv')
 	end = time.time()	
 
 	print("Time elapsed [s] " + str(end - start))
