@@ -21,7 +21,7 @@ class CSP_Model:
 
 	def __init__(self):
 		self.crossvalidation = True
-		self.data_path 	= '/home/javier/Documents/Graz/'
+		self.data_path 	= '/home/javierfumanal/Documents/Graz/'
 		self.svm_kernel	= 'linear' #'sigmoid'#'linear' # 'sigmoid', 'rbf', 'poly'
 		self.svm_c 	= 0.1 # 0.05 for linear, 20 for rbf, poly: 0.1
 		self.useCSP = True
