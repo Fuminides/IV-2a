@@ -95,7 +95,7 @@ class Riemannian_Model:
     def __init__(self, cost, agrupate):
         self.agrupate = agrupate
         self.crossvalidation = True
-        self.data_path = '/home/javierfumanal/Documents/Graz/'
+        self.data_path = '/home/fcojavier.fernandez/Github/Graz/'
         self.svm_kernel = 'linear'  # 'sigmoid'#'linear' # 'sigmoid', 'rbf',
         self.svm_c = 0.1  # for linear 0.1 (inverse),
         self.NO_splits = 20  # number of folds in cross validation
