@@ -22,14 +22,15 @@ import Fancy_aggregations as fz
 __author__ = "Michael Hersche and Tino Rellstab"
 __email__ = "herschmi@ethz.ch,tinor@ethz.ch"
 
+class dummy_plug:
+        def _init(self, x=None):
+            self.x = x
 
 def fast_montecarlo_optimization(function_alpha, x0=[0.5], minimizer_kwargs=None, niter=200, smart=True):
     '''
     Just randomly samples the function. More functionality might come in the future if necessary.
     '''
-    class dummy_plug:
-        def _init(self, x=None):
-            self.x = x
+    
 
     iter_actual = 0
 
@@ -78,6 +79,9 @@ def alpha_learn(X, y, cost):
     res = fast_montecarlo_optimization(
         function_alpha, x0=x0, niter=100)
     alpha_value = res
+
+    if isinstance(alpha_value, dummy_plug):
+        alpha_value = alpha_value.x
 
     if hasattr(alpha_value, 'len'):
         alpha_value = alpha_value[0]
@@ -129,8 +133,12 @@ class Riemannian_Model:
         self.eval_trials = 0
         self.vectorized = False
         self.cost = cost
-        self.agg = lambda x, axis=0, keepdims=False: fz.penalties.penalty_aggregation(x, axis=axis, keepdims=keepdims,
+
+        if self.cost is None:
+            self.agg = lambda x, axis=0, keepdims=False: fz.penalties.penalty_aggregation(x, axis=axis, keepdims=keepdims,
                                                                                       agg_functions=[np.mean, np.max, np.median, np.min], cost=fz.penalties.cost_functions[self.cost])
+        else:
+            self.agg = np.mean
 
     def run_riemannian(self):
 
@@ -191,8 +199,13 @@ class Riemannian_Model:
 
                 clfs.append(clf)
 
-            self.agg = alpha_learn(
-				logits_train, self.train_label-1, fz.penalties.cost_functions[self.cost])
+            if cost is not None:
+                new_cost = alpha_learn(logits_train, self.train_label-1, fz.penalties.cost_functions[self.cost])
+
+                self.agg = lambda x, axis=0, keepdims=False: fz.penalties.penalty_aggregation(x, axis=axis, keepdims=keepdims,
+                                                                                      agg_functions=[np.mean, np.max, np.median, np.min], 
+																					  cost=new_cost)
+
 
             end_train = time.time()
             self.train_time += end_train-start_train
@@ -222,7 +235,7 @@ class Riemannian_Model:
                 full_logits[freq, :, :] = freq_logits
 
             success_rate = np.mean(np.equal(np.argmax(
-                self.agg(full_logits, axis=0, keepdims=False), axis=1), self.eval_label-1))
+                self.agg(full_logits, axis=0), axis=1), self.eval_label-1))
 
         # print(success_rate)
         end_eval = time.time()
