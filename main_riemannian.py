@@ -92,8 +92,8 @@ def alpha_learn(X, y, cost):
 
 class Riemannian_Model:
 
-    def __init__(self, cost):
-        self.agrupate = 3
+    def __init__(self, cost, agrupate):
+        self.agrupate = agrupate
         self.crossvalidation = True
         self.data_path = '/home/javierfumanal/Documents/Graz/'
         self.svm_kernel = 'linear'  # 'sigmoid'#'linear' # 'sigmoid', 'rbf',
@@ -270,8 +270,8 @@ class Riemannian_Model:
                 self.subject, False, self.data_path)
 
 
-def main():
-    model = Riemannian_Model(cost=0)
+def main(output, cost, groups):
+    model = Riemannian_Model(cost=cost, agrupate=groups)
 
     print("Number of used features: " + str(model.NO_features))
 
@@ -321,7 +321,16 @@ def main():
     end = time.time()
 
     print("Time elapsed [s] " + str(end - start))
+    with open(output, 'w') as f:
+        f.write(str(success_tot_sum/model.NO_subjects))
+
 
 
 if __name__ == '__main__':
-    main()
+    import sys
+    output_file = sys.argv[1]
+    cost = int(sys.argv[2])
+    group = int(sys.argv[3])
+
+    main(output_file, cost, group)
+
