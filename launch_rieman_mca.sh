@@ -3,7 +3,7 @@
 #$ -cwd
 source activate py365
 
-python main_riemannian.py cost_0_groups_2_test.txt 0 2
+python main_riemannian.py cost_0_groups_2_test.txt 0 2 2>error.txt >salida.txt
 python main_riemannian.py cost_0_groups_3_test.txt 0 3
 python main_riemannian.py cost_0_groups_4_test.txt 0 4
 python main_riemannian.py cost_0_groups_5_test.txt 0 5
