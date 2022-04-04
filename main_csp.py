@@ -100,7 +100,7 @@ class CSP_Model:
 		self.NO_splits = 5 # number of folds in cross validation 
 		self.fs = 250. # sampling frequency 
 		self.NO_channels = 15 # number of EEG channels 
-		self.NO_subjects = 10
+		self.NO_subjects = 9
 		self.NO_csp = 24 # Total number of CSP feature per band and timewindow
 		self.bw = np.array([2,4,8,16,32]) # bandwidth of filtered signals 
 		# self.bw = np.array([1,2,4,8,16,32])
