@@ -199,7 +199,7 @@ class Riemannian_Model:
 
                 clfs.append(clf)
 
-            if cost is not None:
+            if self.cost is not None:
                 new_cost = alpha_learn(logits_train, self.train_label-1, fz.penalties.cost_functions[self.cost])
 
                 self.agg = lambda x, axis=0, keepdims=False: fz.penalties.penalty_aggregation(x, axis=axis, keepdims=keepdims,
