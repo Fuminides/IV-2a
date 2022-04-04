@@ -93,7 +93,7 @@ class CSP_Model:
 		self.agrupate = agrupate
 	
 		self.crossvalidation = True
-		self.data_path 	= '/home/javierfumanal/Documents//Graz/'
+		self.data_path 	= '/home/fcojavier.fernandez/Github/Graz/'
 		self.svm_kernel	= 'linear' #'sigmoid'#'linear' # 'sigmoid', 'rbf', 'poly'
 		self.svm_c 	= 0.1 # 0.05 for linear, 20 for rbf, poly: 0.1
 		self.useCSP = True
