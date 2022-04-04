@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -q cal.q
 #$ -cwd
-#$ -t 
+#$ -t 1-36
 source activate py365
 
 argumentos[${#argumentos[@]}]="main_riemannian.py cost_0_groups_2_test.txt 0 2"
