@@ -4,6 +4,8 @@
 Model for Riemannian feature calculation and classification for EEG data
 '''
 
+import pandas as pd
+
 import numpy as np
 import time
 import sys
@@ -286,7 +288,7 @@ def main(output, cost, groups):
         print("Test data set")
 
     start = time.time()
-
+    accuracies = []
     # Go through all subjects
     for model.subject in range(1, model.NO_subjects+1):
 
@@ -299,6 +301,7 @@ def main(output, cost, groups):
                 model.load_data()
                 s_acc = model.run_riemannian()
                 print(s_acc)
+                accuracies.append(s_acc)
                 success_sub_sum += s_acc
 
             # average over all splits
@@ -324,6 +327,7 @@ def main(output, cost, groups):
     with open(output, 'w') as f:
         f.write(str(success_tot_sum/model.NO_subjects))
 
+	pd.DataFrame(np.array(accuracies)).to_csv('csp_accuracies_' + cost + '_' + groups + '.csv')
 
 
 if __name__ == '__main__':
