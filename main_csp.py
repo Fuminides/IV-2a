@@ -95,7 +95,7 @@ class CSP_Model:
 		self.agrupate = agrupate
 	
 		self.crossvalidation = True
-		self.data_path 	= '/home/fcojavier.fernandez/Github/Graz/'
+		self.data_path 	= '/home/fcojavier.fernandez/Github/WCCI/'
 		self.svm_kernel	= 'linear' #'sigmoid'#'linear' # 'sigmoid', 'rbf', 'poly'
 		self.svm_c 	= 0.1 # 0.05 for linear, 20 for rbf, poly: 0.1
 		self.useCSP = True
@@ -157,7 +157,7 @@ class CSP_Model:
 		start_train = time.time()
 		# 1. Apply CSP to bands to get spatial filter 
 		if self.useCSP: 
-			w = generate_projection(self.train_data,self.train_label, self.NO_csp,self.filter_bank,self.time_windows, 4)
+			w = generate_projection(self.train_data,self.train_label, self.NO_csp,self.filter_bank,self.time_windows, 2)
 		else: 
 			w = generate_eye(self.train_data,self.train_label,self.filter_bank,self.time_windows)
 
@@ -344,6 +344,7 @@ def main(output, cost, groups):
 
 if __name__ == '__main__':
 	import sys
+	sys.argv=['', '7', '0', '5']
 	print(sys.argv)
 	output_file = sys.argv[1]
 	cost = int(sys.argv[2])

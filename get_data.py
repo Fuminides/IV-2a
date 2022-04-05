@@ -10,7 +10,7 @@ import scipy.io as sio
 __author__ = "Michael Hersche and Tino Rellstab"
 __email__ = "herschmi@ethz.ch,tinor@ethz.ch"
 
-def get_data(subject,training,PATH):
+def get_data_og(subject,training,PATH):
 	'''	Loads the dataset 2a of the BCI Competition IV
 	available on http://bnci-horizon-2020.eu/database/data-sets
 
@@ -85,3 +85,34 @@ def get_data(subject,training,PATH):
 	inds = np.where(np.isnan(data_return))
 	data_return[inds] = np.take(col_mean, inds[1])
 	return data_return[0:NO_valid_trial,:,:], class_return[0:NO_valid_trial]
+
+
+def get_data(subject, training=True, PATH='./'):
+	import scipy.io as sio
+	Window_Length = 7*250 
+	#subjects = 8
+	res = []; y_res=[]
+	global_NO_valid_trial = 0
+    
+	NO_channels = 12
+	NO_tests = 20
+	Window_Length = 7*250 
+
+	class_return = np.zeros(NO_tests)
+	data_return = np.zeros((NO_tests,NO_channels,Window_Length))
+
+	NO_valid_trial = 0
+
+	if subject < 10:
+		subject = '0' + str(subject)
+
+	if training:
+		a = sio.loadmat(PATH+'parsed_P'+str(subject)+'T.mat')
+	else:
+		a = sio.loadmat(PATH+'B'+str(subject)+'E.mat')
+        
+	a = sio.loadmat(PATH+'parsed_P'+str(subject)+'T.mat')
+	X = a['RawEEGData']
+	y = a['Labels']
+    
+	return X, np.ravel(y) #np.eye(2)[np.array(np.ravel(y)-1, dtype='int32')]
