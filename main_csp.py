@@ -344,8 +344,7 @@ def main(output, cost, groups):
 
 if __name__ == '__main__':
 	import sys
-	sys.argv=['', '7', '0', '5']
-	print(sys.argv)
+	
 	output_file = sys.argv[1]
 	cost = int(sys.argv[2])
 	group = int(sys.argv[3])
