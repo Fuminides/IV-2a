@@ -335,7 +335,7 @@ def main(output, cost, groups):
 
 	print("Training average time: " +  str(model.train_time/model.NO_subjects))
 	print("Evaluation average time: " +  str(model.eval_time/model.NO_subjects))
-	pd.DataFrame(np.array(accuracies)).to_csv('csp_accuracies_' + cost + '_' + groups + '.csv')
+	pd.DataFrame(np.array(accuracies)).to_csv('csp_accuracies_' + str(cost) + '_' + str(groups) + '.csv')
 	end = time.time()	
 
 	print("Time elapsed [s] " + str(end - start))

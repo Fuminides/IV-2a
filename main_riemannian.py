@@ -327,7 +327,7 @@ def main(output, cost, groups):
     with open(output, 'w') as f:
         f.write(str(success_tot_sum/model.NO_subjects))
 
-	pd.DataFrame(np.array(accuracies)).to_csv('riemann_accuracies_' + cost + '_' + groups + '.csv')
+    pd.DataFrame(np.array(accuracies)).to_csv('riemann_accuracies_' + str(cost) + '_' + str(groups) + '.csv')
 
 
 if __name__ == '__main__':
