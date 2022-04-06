@@ -344,9 +344,12 @@ def main(output, cost, groups):
 
 if __name__ == '__main__':
 	import sys
-	
-	output_file = sys.argv[1]
-	cost = int(sys.argv[2])
-	group = int(sys.argv[3])
+	try:
+		output_file = sys.argv[1]
+		cost = int(sys.argv[2])
+		group = int(sys.argv[3])
 
-	main(output_file, cost, group)
+		main(output_file, cost, group)
+	except IndexError:
+		main('std_csp.txt', cost=None, group=None)
+
