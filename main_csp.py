@@ -97,7 +97,7 @@ class CSP_Model:
 		self.agrupate = agrupate
 
 		self.crossvalidation = True
-		self.data_path = '/home/javierfumanal/Documents/Graz/'
+		self.data_path = '/home/fcojavier.fernandez/Github/WCCI/'
 		if 'Graz' in self.data_path:
 			self.nclasses = 4
 		else:
