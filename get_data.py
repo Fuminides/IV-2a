@@ -10,7 +10,7 @@ import scipy.io as sio
 __author__ = "Michael Hersche and Tino Rellstab"
 __email__ = "herschmi@ethz.ch,tinor@ethz.ch"
 
-def get_data_og(subject,training,PATH):
+def get_data_graz(subject,training,PATH):
 	'''	Loads the dataset 2a of the BCI Competition IV
 	available on http://bnci-horizon-2020.eu/database/data-sets
 
@@ -87,7 +87,7 @@ def get_data_og(subject,training,PATH):
 	return data_return[0:NO_valid_trial,:,:], class_return[0:NO_valid_trial]
 
 
-def get_data(subject, training=True, PATH='./'):
+def get_data_wcci(subject, training=True, PATH='./'):
 	import scipy.io as sio
 	Window_Length = 7*250 
 	#subjects = 8
