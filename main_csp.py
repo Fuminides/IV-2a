@@ -97,7 +97,7 @@ class CSP_Model:
 		self.agrupate = agrupate
 
 		self.crossvalidation = True
-		self.data_path = '/home/fcojavier.fernandez/Github/WCCI/'
+		self.data_path = '/home/javierfumanal/Documents/Graz/'
 		if 'Graz' in self.data_path:
 			self.nclasses = 4
 		else:
@@ -150,7 +150,7 @@ class CSP_Model:
 		self.train_trials = 0
 		self.eval_time = 0
 		self.eval_trials = 0
-		self.vectorized = cost is not None
+		self.vectorized = cost is None
 		self.cost = cost
 
 		if self.cost is None:
